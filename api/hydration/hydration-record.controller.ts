@@ -56,21 +56,18 @@ export const getTodayHydrationRecordById = async (req: any, res: any) => {
                 ]
             });
 
-            !hydrationHistory.length ?
+            if (!hydrationHistory.length) {
                 res.status(204).json({
                     status: 'success',
                     message: 'No Content Found'
-                }) :
-                hydrationHistory.forEach((history: IHydrationHistory) => {
-                    goalReached = goalReached + history.drunk;
-                    return history;
+                })
+            }else {
+                res.status(200).json({
+                    status: 'success',
+                    message: 'Fecthed Record Successfully',
+                    data: { hydrationHistory, goalReached }
                 });
-
-            res.status(200).json({
-                status: 'success',
-                message: 'Fecthed Record Successfully',
-                data: { hydrationHistory, goalReached }
-            });
+            }
         }
 
     }
