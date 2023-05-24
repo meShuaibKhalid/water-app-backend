@@ -140,11 +140,16 @@ export const getHydrationRecordByDay = async (req: any, res: any) => {
                 })
             }
             else {
+                console.log('hydrationRecord: ', hydrationRecord);
+
                 hydrationRecord.forEach((history: IHydrationHistory) => {
                     goalReached = goalReached + history.drunk;
                     goal = history.todayGoal;
                     return history;
                 });
+                if(goalReached > goal ) {
+                    goalReached  = goal;
+                }
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Daily Record Successfully. Use this value for showing percentage',
@@ -202,6 +207,9 @@ export const getHydrationRecordByMonth = async (req: any, res: any) => {
                     goal = history.todayGoal;
                     return history;
                 });
+                if(goalReached > goal ) {
+                    goalReached  = goal;
+                }
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Monthly Record Successfully. Use this value for showing percentage',
@@ -258,6 +266,9 @@ export const getHydrationRecordByWeek = async (req: any, res: any) => {
                     goal = history.todayGoal;
                     return history;
                 });
+                if(goalReached > goal ) {
+                    goalReached  = goal;
+                }
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Weekly Record Successfully. Use this value for showing percentage',

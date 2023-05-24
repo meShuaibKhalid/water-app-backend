@@ -11,7 +11,7 @@ const ObjectId = Mongoose.Types.ObjectId;
  * @param res response
  */
 export const createUser = async (req: any, res: any) => {
-    console.log('req: ', req.body);
+    console.log('req:Create ', req.body);
     try {
         const user: IUser = req.body;
 
@@ -59,7 +59,7 @@ export const createUser = async (req: any, res: any) => {
  * @returns users
  */
 export const getUserById = async (req: any, res: any) => {
-    console.log(req.params.id)
+    console.log("get User id", req.params.id)
     const userObject: any = {
         mainMember: {},
         familyMembers: []
@@ -93,6 +93,7 @@ export const getUserById = async (req: any, res: any) => {
  * @returns 
  */
 export const updateUser = async (req: any, res: any) => {    
+    console.log('req:upudate ', req.body);
     try {
         const user = await User.findByIdAndUpdate({ "_id":new ObjectId(req.params.id) }, req.body);
         
@@ -115,6 +116,7 @@ export const updateUser = async (req: any, res: any) => {
  * @returns 
  */
  export const updateFamilyMember = async (req: any, res: any) => {
+    console.log('req: updateFamilyMember ', req);
     try {
         const user = await User.findByIdAndUpdate({ "_id": new ObjectId(req.params.id) }, req.body);
         return res.status(200).json({
