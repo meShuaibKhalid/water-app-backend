@@ -4,7 +4,7 @@ const router = express.Router();
 
 //Hydration Endpoints
 router.post("/add", HydrationController.addHydrationRecord);
-router.get("/:id", HydrationController.getTodayHydrationRecordById);
+router.get("/:id/dailyHydration", HydrationController.getTodayHydrationRecordById);
 router.post("/recordByDay", HydrationController.getHydrationRecordByDay);
 router.post("/recordbyMonth", HydrationController.getHydrationRecordByMonth);
 router.post("/recordByWeek", HydrationController.getHydrationRecordByWeek);
