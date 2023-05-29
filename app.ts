@@ -2,7 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'express';
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin:"*"
+}));
 
 app.use(express.json());
 app.use(urlencoded({ limit: '50mb', extended: false }))
