@@ -62,6 +62,10 @@ export const getTodayHydrationRecordById = async (req: any, res: any) => {
                     message: 'No Content Found'
                 })
             }else {
+
+                hydrationHistory.forEach((history: IHydrationHistory) => {
+                    goalReached = goalReached + history.drunk;
+                });
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Record Successfully',
@@ -97,7 +101,7 @@ export const getHydrationRecords = async (req: any, res: any) => {
             hydrationHistory.forEach((history: IHydrationHistory) => {
                 goalReached = 0;
                 goalReached = goalReached + history.drunk;
-                return history.goalReached = goalReached;
+                history.goalReached = goalReached;
             });
 
         res.status(200).json({
@@ -145,11 +149,7 @@ export const getHydrationRecordByDay = async (req: any, res: any) => {
                 hydrationRecord.forEach((history: IHydrationHistory) => {
                     goalReached = goalReached + history.drunk;
                     goal = history.todayGoal;
-                    return history;
                 });
-                if(goalReached > goal ) {
-                    goalReached  = goal;
-                }
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Daily Record Successfully. Use this value for showing percentage',
@@ -205,11 +205,8 @@ export const getHydrationRecordByMonth = async (req: any, res: any) => {
                 hydrationRecord.forEach((history: IHydrationHistory) => {
                     goalReached = goalReached + history.drunk;
                     goal = history.todayGoal;
-                    return history;
                 });
-                if(goalReached > goal ) {
-                    goalReached  = goal;
-                }
+                
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Monthly Record Successfully. Use this value for showing percentage',
@@ -253,7 +250,6 @@ export const getHydrationRecordByWeek = async (req: any, res: any) => {
                     }
                 ]
             })
-
             if (hydrationRecord.length <= 0) {
                 res.status(200).json({
                     status: 'success',
@@ -266,9 +262,7 @@ export const getHydrationRecordByWeek = async (req: any, res: any) => {
                     goal = history.todayGoal;
                     return history;
                 });
-                if(goalReached > goal ) {
-                    goalReached  = goal;
-                }
+             
                 res.status(200).json({
                     status: 'success',
                     message: 'Fecthed Weekly Record Successfully. Use this value for showing percentage',

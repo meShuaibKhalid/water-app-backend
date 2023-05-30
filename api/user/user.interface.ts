@@ -8,6 +8,7 @@ export interface IUser {
     personalInfo?: IUserPersonalInfo;
     todayGoal?: number;
     schoolTimings?: ISchoolTimings;
+    isSchoolGoing?: boolean;
     createdDate?: Date | string;
     modifiedDate?: Date | string;
 }

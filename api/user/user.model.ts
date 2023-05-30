@@ -26,6 +26,7 @@ let UserSchema: Schema<IUser> = new Schema({
         startTime: { type: String, trim: true, required: false },
         endTime: { type: String, trim: true, required: false },
     },
+    isSchoolGoing: { type: Boolean, required: false},
     todayGoal: { type: Number, required: false },
     createdDate: { type: Date, default: Date.now },
     modifiedDate: { type: Date, default: Date.now },
