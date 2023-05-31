@@ -1,6 +1,7 @@
 import { IUser } from './user.interface';
 import * as qrCode from 'qrcode';
 import User from './user.model';
+import Notifications from '../notifications/notification.model';
 const Mongoose = require("mongoose");
 const ObjectId = Mongoose.Types.ObjectId;
 
@@ -65,14 +66,23 @@ export const getUserById = async (req: any, res: any) => {
         familyMembers: []
     };
     try {
+
+          if(!req.params.id) {
+            return res.status(400).json({
+                status: 'fail',
+                message: 'user Id is missing',
+            });
+          }
+
         const users: any = await User.find({
             $or: [
                 { "_id": new ObjectId(req.params.id) },
                 { "mainMemberId": new ObjectId(req.params.id) }
             ]
         }
-        );
+        ).populate('notifications')
 
+        console.log('users: ', users);
         users.forEach((user: IUser) => !user.mainMemberId ? userObject.mainMember = user : userObject.familyMembers.push(user));
         return res.status(200).json({
             status: 'success',

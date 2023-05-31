@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(urlencoded({ limit: '50mb', extended: false }))
 
 app.use("/api/v1/users", require('./api/user'));
+app.use("/api/v1/notifications", require('./api/notifications'));
 app.use("/api/v1/hydration", require('./api/hydration'));
 
 export default app;

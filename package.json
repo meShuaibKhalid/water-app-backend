@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "ts-node bin/www",
-    "dev": "nodemon bin/www",
+    "start": "ts-node bin/www.ts",
+    "dev": "nodemon bin/www.ts",
     "tsc": "tsc",
-    "build:prod": "npm run tsc && node dist/bin/www"
+    "build:prod": "npm run tsc && node dist/bin/www.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "moment": "^2.29.4",
     "mongoose": "^7.0.3",
     "nodemon": "^2.0.22",
     "qrcode": "^1.5.1",

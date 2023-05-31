@@ -33,6 +33,14 @@ let UserSchema: Schema<IUser> = new Schema({
 },
     schemaOptions
 )
+
+
+UserSchema.virtual('notifications', {
+    ref: 'Notifications',
+    localField: '_id',
+    foreignField: 'userId',
+    justOne: false
+  });
 const User = model<IUser>("user", UserSchema);
 export default User;
 

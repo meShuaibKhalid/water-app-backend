@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IHydrationHistory } from "./hydration-history.interface";
 import HydrationHistory from "./hydration-history.model";
 const Mongoose = require("mongoose");
@@ -36,7 +37,8 @@ export const addHydrationRecord = async (req: any, res: any) => {
 export const getTodayHydrationRecordById = async (req: any, res: any) => {
     let goalReached = 0;
     try {
-
+console.log(new Date(new Date().setHours(0, 0, 0, 0)), 'start')
+console.log( new Date(new Date().setHours(23, 59, 59, 999)), 'end')
         if (req.params.id === undefined || req.params.id === null) {
             res.status(400).json({
                 status: 'failed',
@@ -123,6 +125,8 @@ export const getHydrationRecords = async (req: any, res: any) => {
  */
 export const getHydrationRecordByDay = async (req: any, res: any) => {
     let goalReached = 0, goal = 0;
+    const startDate = moment(req.body.currentDate).startOf('day');
+    const endDate = moment(req.body.currentDate).endOf('day');
     try {
         if (req.body) {
             const hydrationRecord = await HydrationHistory.find({
@@ -130,8 +134,8 @@ export const getHydrationRecordByDay = async (req: any, res: any) => {
                     { "userId": new ObjectId(`${req.body.id}`) },
                     {
                         "createdDate": {
-                            $gte: new Date(new Date(req.body.currentDate).setHours(0, 0, 0, 0)),
-                            $lte: new Date(new Date(req.body.currentDate).setHours(23, 59, 59, 999))
+                            $gte: startDate,
+                            $lte: endDate
                         }
                     }
                 ]
@@ -176,9 +180,8 @@ export const getHydrationRecordByDay = async (req: any, res: any) => {
  */
 export const getHydrationRecordByMonth = async (req: any, res: any) => {
     let goalReached = 0, goal = 0;
-    const currentDate = new Date(req.body.currentDate);
-    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
-    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    const startDate = moment(req.body.currentDate).startOf('month');
+    const endDate = moment(req.body.currentDate).endOf('month');
     try {
         if (req.body) {
             const hydrationRecord = await HydrationHistory.find({
@@ -187,11 +190,13 @@ export const getHydrationRecordByMonth = async (req: any, res: any) => {
                     {
                         "createdDate": {
                             $gte: startDate,
-                            $lte: endDate
+                            $lte: endDate,
+                           
                         }
                     }
                 ]
             })
+            console.log('hydrationRecordbyMonth: ', hydrationRecord);
 
             if (hydrationRecord.length <= 0) {
                 res.status(200).json({
@@ -235,8 +240,7 @@ export const getHydrationRecordByWeek = async (req: any, res: any) => {
     let goalReached = 0, goal = 0;
     const startDate = new Date(req.body.startDate);
     const endDate = new Date(req.body.endDate);
-    console.log(startDate, 'startDate')
-    console.log(endDate, 'endDate')
+   
     try {
         if (req.body) {
             const hydrationRecord = await HydrationHistory.find({
