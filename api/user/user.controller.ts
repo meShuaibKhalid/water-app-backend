@@ -2,6 +2,7 @@ import { IUser } from './user.interface';
 import * as qrCode from 'qrcode';
 import User from './user.model';
 import Notifications from '../notifications/notification.model';
+import moment from 'moment';
 const Mongoose = require("mongoose");
 const ObjectId = Mongoose.Types.ObjectId;
 
@@ -60,6 +61,7 @@ export const createUser = async (req: any, res: any) => {
  * @returns users
  */
 export const getUserById = async (req: any, res: any) => {
+    const currentTime = moment();
     console.log("get User id", req.params.id)
     const userObject: any = {
         mainMember: {},
@@ -82,8 +84,24 @@ export const getUserById = async (req: any, res: any) => {
         }
         ).populate('notifications')
 
-        console.log('users: ', users);
-        users.forEach((user: IUser) => !user.mainMemberId ? userObject.mainMember = user : userObject.familyMembers.push(user));
+
+
+        users.forEach((user: any) => {
+            if(!user.mainMemberId){
+                userObject.mainMember = user 
+            }else{
+                user.notifiactions = user.notifications.filter((notification: any) => {
+                    const createdAtTime = moment(notification.createdAt);
+                    return createdAtTime.isSameOrBefore(currentTime, 'minute');
+                });
+                console.log('user: ', user);
+
+                userObject.familyMembers.push(user)
+            }
+        })
+
+
+
         return res.status(200).json({
             status: 'success',
             message: 'Fetched user successfully',

@@ -5,5 +5,5 @@ const router = express.Router();
 
 //notifications Endpoints
 router.post("/saveNotification/", notifications.addNotification);
-router.get("/:id/getUserByID", notifications.getNotification);
+router.post("/deleteNotification/", notifications.deleteNotification);
 module.exports = router;
