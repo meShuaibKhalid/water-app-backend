@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "ts-node bin/www.ts",
-    "dev": "nodemon bin/www.ts",
+    "start": "ts-node bin/www",
+    "dev": "nodemon bin/www",
     "tsc": "tsc",
-    "build:prod": "npm run tsc && node dist/bin/www.ts"
+    "build:prod": "npm run tsc && node dist/bin/www"
   },
   "keywords": [],
   "author": "",
