@@ -86,27 +86,34 @@ export const getUserById = async (req: any, res: any) => {
 
 
 
-        users.forEach((user: any) => {
-            if(!user.mainMemberId){
-                userObject.mainMember = user 
-            }else{
-                user.notifiactions = user.notifications.filter((notification: any) => {
-                    const createdAtTime = moment(notification.createdAt);
-                    return createdAtTime.isSameOrBefore(currentTime, 'minute');
-                });
-                console.log('user: ', user);
-
-                userObject.familyMembers.push(user)
-            }
-        })
-
-
-
-        return res.status(200).json({
-            status: 'success',
-            message: 'Fetched user successfully',
-            data: userObject
-        });
+        if(!users.length){
+            return res.status(404).json({
+                status: 'ID not macth',
+                message: 'User ID worng',
+                data: users
+            })
+        }
+        else{
+            users.forEach((user: any) => {
+                if(!user.mainMemberId){
+                    userObject.mainMember = user 
+                }else{
+                    user.notifiactions = user.notifications.filter((notification: any) => {
+                        const createdAtTime = moment(notification.createdAt);
+                        return createdAtTime.isSameOrBefore(currentTime, 'minute');
+                    });
+                    console.log('user: ', user);
+                    
+                    userObject.familyMembers.push(user)
+                }
+            });
+            
+            return res.status(200).json({
+                status: 'success',
+                message: 'Fetched user successfully',
+                data: userObject
+            });
+        }
     }
     catch (error) {
         console.log("Error in Fetching User", error);
