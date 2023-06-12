@@ -9,5 +9,5 @@ router.get("/:id/getUserByID", UserController.getUserById);
 router.put("/:id/updateUser", UserController.updateUser);
 router.put("/:id/updateFamilyMember", UserController.updateFamilyMember);
 router.get("/qr/:id", UserController.getUserQR);
-router.delete("/familyMember/:id",UserController.removeFamilyMemberAcc)
+router.delete("/:id/familyMemberRemove",UserController.removeFamilyMemberAcc)
 module.exports = router;
