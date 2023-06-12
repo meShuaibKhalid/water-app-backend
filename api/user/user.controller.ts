@@ -1,8 +1,8 @@
 import { IUser } from './user.interface';
 import * as qrCode from 'qrcode';
 import User from './user.model';
-import Notifications from '../notifications/notification.model';
 import moment from 'moment';
+import { INotification } from '../notifications/notification.interface';
 const Mongoose = require("mongoose");
 const ObjectId = Mongoose.Types.ObjectId;
 
@@ -62,19 +62,19 @@ export const createUser = async (req: any, res: any) => {
  */
 export const getUserById = async (req: any, res: any) => {
     const currentTime = moment();
-    console.log("get User id", req.params.id)
+    const currentDate = moment().format('YYYY-MM-DD');
     const userObject: any = {
         mainMember: {},
         familyMembers: []
     };
     try {
 
-          if(!req.params.id) {
+        if (!req.params.id) {
             return res.status(400).json({
                 status: 'fail',
                 message: 'user Id is missing',
             });
-          }
+        }
 
         const users: any = await User.find({
             $or: [
@@ -86,28 +86,36 @@ export const getUserById = async (req: any, res: any) => {
 
 
 
-        if(!users.length){
+        if (!users.length) {
             return res.status(404).json({
                 status: 'ID not macth',
-                message: 'User ID worng',
+                message: 'User ID wrong',
                 data: users
             })
         }
-        else{
+        else {
+
             users.forEach((user: any) => {
-                if(!user.mainMemberId){
-                    userObject.mainMember = user 
-                }else{
-                    user.notifiactions = user.notifications.filter((notification: any) => {
-                        const createdAtTime = moment(notification.createdAt);
-                        return createdAtTime.isSameOrBefore(currentTime, 'minute');
+                if (!user.mainMemberId) {
+                    userObject.mainMember = user
+                } else {
+                    let filteredNotifications: INotification[] = []
+                    // Filter the notifications for the current date 
+                    user.notifications.forEach((notification: INotification) => {
+                        if (moment(notification.createdAt).format('YYYY-MM-DD') == currentDate) {
+                            const desiredTime = moment(notification.hour, "h:mm A");
+                            if (desiredTime.isSameOrBefore(currentTime)) {
+                                console.log('checke truee')
+                                filteredNotifications.push(notification)
+                            } else {
+                                filteredNotifications = []
+                            }
+                        }
                     });
-                    console.log('user: ', user);
-                    
+                    user.notifications = filteredNotifications;
                     userObject.familyMembers.push(user)
                 }
-            });
-            
+            })
             return res.status(200).json({
                 status: 'success',
                 message: 'Fetched user successfully',
@@ -121,17 +129,18 @@ export const getUserById = async (req: any, res: any) => {
     }
 }
 
+
 /**
  * Updates User
  * @param req request
  * @param res resposne
  * @returns 
  */
-export const updateUser = async (req: any, res: any) => {    
+export const updateUser = async (req: any, res: any) => {
     console.log('req:upudate ', req.body);
     try {
-        const user = await User.findByIdAndUpdate({ "_id":new ObjectId(req.params.id) }, req.body);
-        
+        const user = await User.findByIdAndUpdate({ "_id": new ObjectId(req.params.id) }, req.body);
+
         return res.status(200).json({
             status: 'success',
             message: 'Updated user successfully',
@@ -150,7 +159,7 @@ export const updateUser = async (req: any, res: any) => {
  * @param res resposne
  * @returns 
  */
- export const updateFamilyMember = async (req: any, res: any) => {
+export const updateFamilyMember = async (req: any, res: any) => {
     console.log('req: updateFamilyMember ', req);
     try {
         const user = await User.findByIdAndUpdate({ "_id": new ObjectId(req.params.id) }, req.body);
@@ -190,7 +199,7 @@ export const getUserQR = async (req: any, res: any) => {
     }
 }
 
-export const removeFamilyMemberAcc = async(req:any, res:any) => {
+export const removeFamilyMemberAcc = async (req: any, res: any) => {
     try {
         const user: any = await User.findByIdAndDelete(new ObjectId(`${req.params.id}`));
         console.log('user: ', user);
@@ -206,4 +215,3 @@ export const removeFamilyMemberAcc = async(req:any, res:any) => {
         throw new Error("Error in Deleting Family Member");
     }
 }
- 
