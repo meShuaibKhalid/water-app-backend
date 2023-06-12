@@ -4,5 +4,6 @@ export interface INotification {
     message?: string;
     userId?: string;
     hour?: string;  
+    createdAt?: string;
 }
 
