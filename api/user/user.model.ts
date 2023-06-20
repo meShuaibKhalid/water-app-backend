@@ -30,6 +30,7 @@ let UserSchema: Schema<IUser> = new Schema({
     todayGoal: { type: Number, required: false },
     createdDate: { type: Date, default: Date.now },
     modifiedDate: { type: Date, default: Date.now },
+    active : {type: Boolean , required: false, default: true}
 },
     schemaOptions
 )

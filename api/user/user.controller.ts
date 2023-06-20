@@ -32,7 +32,7 @@ export const createUser = async (req: any, res: any) => {
         else {
             if (user.mainMemberId) {
                 const newFamilyMember = await User.create(user);
-                return res.status(201).json({
+                return res.status(200).json({
                     status: 'success',
                     message: 'Added Family Member successfully',
                     data: newFamilyMember
@@ -41,7 +41,7 @@ export const createUser = async (req: any, res: any) => {
             else {
                 const newUser = new User(user);
                 const savedUser = await newUser.save();
-                return res.status(201).json({
+                return res.status(200).json({
                     status: 'success',
                     message: 'User created successfully',
                     data: savedUser
@@ -80,21 +80,21 @@ export const getUserById = async (req: any, res: any) => {
             $or: [
                 { "_id": new ObjectId(req.params.id) },
                 { "mainMemberId": new ObjectId(req.params.id) }
-            ]
-        }
+            ], 
+                active: true
+        }, 
         ).populate('notifications')
 
 
 
         if (!users.length) {
             return res.status(404).json({
-                status: 'ID not macth',
-                message: 'User ID wrong',
+                status: 'Invalid ID',
+                message: 'Data not found',
                 data: users
             })
         }
         else {
-
             users.forEach((user: any) => {
                 if (!user.mainMemberId) {
                     userObject.mainMember = user
@@ -213,5 +213,43 @@ export const removeFamilyMemberAcc = async (req: any, res: any) => {
     } catch (error) {
         console.log("Error in Deleting Family Member ", error);
         throw new Error("Error in Deleting Family Member");
+    }
+}
+
+/**
+ * De-Active User object
+ * @param req request
+ * @param res response
+ * @returns 
+ */
+export const deactivateUser = async (req: any, res: any) => {
+    try {
+
+        const users: any = await User.find({
+            $or: [
+                { "_id": new ObjectId(req.params.id) },
+                { "mainMemberId": new ObjectId(req.params.id) }
+            ]
+        }
+        ).populate('notifications')
+        const userIDs = users.map((user: any) => user._id);
+
+        await User.updateMany({
+            $or: [
+                { "_id": { $in: userIDs } },
+                { "mainMemberId": { $in: userIDs } }
+            ]
+        },
+            { active: false }
+        );
+
+        if(users){
+            res.status(200).json({ message: "users deactivated"});
+            return;
+        }
+
+    } catch (error) {
+        console.log('error: ', error);
+        res.status(500).json(error);
     }
 }

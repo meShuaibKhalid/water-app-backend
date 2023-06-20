@@ -11,6 +11,7 @@ export interface IUser {
     isSchoolGoing?: boolean;
     createdDate?: Date | string;
     modifiedDate?: Date | string;
+    active?: boolean
 }
 
 export interface IUserPersonalInfo {
