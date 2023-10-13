@@ -216,6 +216,21 @@ export const removeFamilyMemberAcc = async (req: any, res: any) => {
     }
 }
 
+export const deleteUserAccount = async (req:any, res:any) =>{
+    try{
+        const user: any = await User.deleteOne({deviceId: req.params.id});
+        if (user) {
+            return res.status(200).json({
+                status: 'success',
+                message: 'Deleted user successfully',
+            });
+        }
+    } catch(error) {
+        console.log("Error in Deleting user", error);
+        throw new Error("Error in Deleting user");
+    }
+}
+
 /**
  * De-Active User object
  * @param req request
@@ -226,26 +241,26 @@ export const deactivateUser = async (req: any, res: any) => {
     try {
 
         const users: any = await User.find({
-            $or: [
-                { "_id": new ObjectId(req.params.id) },
-                { "mainMemberId": new ObjectId(req.params.id) }
-            ]
+        $or: [
+        { "_id": new ObjectId(req.params.id) },
+        { "mainMemberId": new ObjectId(req.params.id) }
+        ]
         }
         ).populate('notifications')
         const userIDs = users.map((user: any) => user._id);
 
         await User.updateMany({
-            $or: [
-                { "_id": { $in: userIDs } },
-                { "mainMemberId": { $in: userIDs } }
-            ]
+        $or: [
+        { "_id": { $in: userIDs } },
+        { "mainMemberId": { $in: userIDs } }
+        ]
         },
-            { active: false }
+        { active: false }
         );
 
         if(users){
-            res.status(200).json({ message: "users deactivated"});
-            return;
+        res.status(200).json({ message: "users deactivated"});
+        return;
         }
 
     } catch (error) {
