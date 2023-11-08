@@ -16,17 +16,15 @@ export const createUser = async (req: any, res: any) => {
     console.log('req:Create ', req.body);
     try {
         const user: IUser = req.body;
-
-        //check if user already exists
-        const userAlreadyExist = await User.findOne(
-            { "deviceId": user?.deviceId }
-        );
-
-        if (userAlreadyExist && !user.mainMemberId) {
+        //Update if user have existing account
+        const updatedUser = await User.findOneAndUpdate(
+            { "deviceId": user?.deviceId }, user, { new: true }
+        )
+        if (updatedUser && !user.mainMemberId) {
             return res.status(200).json({
                 status: 'success',
-                message: 'User Already Exists',
-                data: userAlreadyExist
+                message: 'User Updated Successfully',
+                data: updatedUser
             });
         }
         else {
@@ -51,6 +49,20 @@ export const createUser = async (req: any, res: any) => {
     } catch (error: any) {
         console.log("Error Creating New User", error);
         throw new Error("Error Creating New User");
+    }
+}
+
+export const getPreviousProfile = async (req: any, res: any) => {
+    try {
+        const user: any = await User.findOne({ "deviceId": req.params.id });
+        return res.status(200).json({
+            status: 'success',
+            message: 'Get Previous Profile Successfully',
+            data: user
+        });
+    } catch (e: any) {
+        console.log("error", e);
+        throw new Error("Error in Fetching User");
     }
 }
 
@@ -80,9 +92,9 @@ export const getUserById = async (req: any, res: any) => {
             $or: [
                 { "_id": new ObjectId(req.params.id) },
                 { "mainMemberId": new ObjectId(req.params.id) }
-            ], 
-                active: true
-        }, 
+            ],
+            active: true
+        },
         ).populate('notifications')
 
 
@@ -216,16 +228,16 @@ export const removeFamilyMemberAcc = async (req: any, res: any) => {
     }
 }
 
-export const deleteUserAccount = async (req:any, res:any) =>{
-    try{
-        const user: any = await User.deleteOne({deviceId: req.params.id});
+export const deleteUserAccount = async (req: any, res: any) => {
+    try {
+        const user: any = await User.deleteOne({ deviceId: req.params.id });
         if (user) {
             return res.status(200).json({
                 status: 'success',
                 message: 'Deleted user successfully',
             });
         }
-    } catch(error) {
+    } catch (error) {
         console.log("Error in Deleting user", error);
         throw new Error("Error in Deleting user");
     }
@@ -241,26 +253,26 @@ export const deactivateUser = async (req: any, res: any) => {
     try {
 
         const users: any = await User.find({
-        $or: [
-        { "_id": new ObjectId(req.params.id) },
-        { "mainMemberId": new ObjectId(req.params.id) }
-        ]
+            $or: [
+                { "_id": new ObjectId(req.params.id) },
+                { "mainMemberId": new ObjectId(req.params.id) }
+            ]
         }
         ).populate('notifications')
         const userIDs = users.map((user: any) => user._id);
 
         await User.updateMany({
-        $or: [
-        { "_id": { $in: userIDs } },
-        { "mainMemberId": { $in: userIDs } }
-        ]
+            $or: [
+                { "_id": { $in: userIDs } },
+                { "mainMemberId": { $in: userIDs } }
+            ]
         },
-        { active: false }
+            { active: false }
         );
 
-        if(users){
-        res.status(200).json({ message: "users deactivated"});
-        return;
+        if (users) {
+            res.status(200).json({ message: "users deactivated" });
+            return;
         }
 
     } catch (error) {

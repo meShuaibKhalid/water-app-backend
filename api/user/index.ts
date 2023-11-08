@@ -12,4 +12,5 @@ router.get("/qr/:id", UserController.getUserQR);
 router.delete("/:id/familyMemberRemove",UserController.removeFamilyMemberAcc);
 router.delete("/:id/deleteUser",UserController.deleteUserAccount);
 router.delete("/:id/deactivate",UserController.deactivateUser);
+router.get("/:id/getPreviousProfile",UserController.getPreviousProfile);
 module.exports = router;
